@@ -1,11 +1,11 @@
-from django.shortcuts import render
 from django.http.response import JsonResponse
-from rest_framework.parsers import JSONParser
+from django.shortcuts import render
 from rest_framework import status
-
-from helpers.models import School, Teacher, Doctor, Student
-from helpers.serializers import SchoolSerializer
 from rest_framework.decorators import api_view
+from rest_framework.parsers import JSONParser
+
+from helpers.models import Doctor, School, Student, Teacher
+from helpers.serializers import SchoolSerializer
 
 # Create your views here.
 

@@ -1,5 +1,7 @@
 from rest_framework import serializers
-from helpers.models import School, Teacher, Doctor, Student
+
+from helpers.models import Doctor, School, Student, Teacher
+
 # Report
 
 class SchoolSerializer(serializers.ModelSerializer):

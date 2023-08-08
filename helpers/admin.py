@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from helpers.models import Teacher, Student, School, Doctor
+from helpers.models import Doctor, School, Student, Teacher
 
 admin.site.register (Teacher)
 admin.site.register(Student)
