@@ -1,6 +1,7 @@
 import datetime
 
 from django.db import models
+from django.utils import timezone
 
 DISABILITY = [
     ("NONE", "None"),
@@ -17,13 +18,28 @@ GENDER = [
     ("Female", "Female"),
 ]
 
+@property
+def age(self):
+    return timezone.now().year - self.dob.year
+ 
+
         
    
-
-class Doctor(models.Model):
+class NameMixin:
+    @property
+    def name(self):
+        return f'{self.first_name} {self.last_name}'
+    
+class AgeMixin:
+    @property
+    def age(self):
+        return timezone.now().year - self.dob.year
+        
+    
+class Doctor(NameMixin, models.Model):
     first_name = models.CharField(blank=False, max_length=80, default='')
     last_name = models.CharField(blank=False, max_length=80, default='')
-    dob = models.DateField(("Date"), default=datetime.date.today)
+    # dob = models.DateField(default=date.today)
     gender = models.CharField(blank=False, max_length=80, default='')
     email = models.CharField(blank=False, max_length=80, default='')
     tel = models.CharField(blank=False, max_length=80, default='')
@@ -54,7 +70,7 @@ class School(models.Model):
        return '{}'.format(self.name)
 
 
-class Teacher(models.Model):
+class Teacher(NameMixin, AgeMixin, models.Model):
     first_name = models.CharField(blank=False, max_length=80, default='')
     last_name = models.CharField(blank=False, max_length=80, default='')
     dob = models.DateField()
@@ -67,7 +83,7 @@ class Teacher(models.Model):
        return '{} {}'.format(self.first_name, self.last_name)
     
 
-class Student(models.Model):  
+class Student(NameMixin, AgeMixin, models.Model):  
     first_name = models.CharField(blank=False, max_length=80, default='')
     last_name = models.CharField(blank=False, max_length=80, default='')
     dob = models.DateField()
@@ -77,9 +93,6 @@ class Student(models.Model):
     grade= models.IntegerField
     stream = models.CharField(blank=False, max_length=80, default='')
     uid = models.IntegerField
-
-    def __str__(self):
-       return '{} {}'.format(self.first_name, self.last_name)
 
 
 # class Report(models.Model):
