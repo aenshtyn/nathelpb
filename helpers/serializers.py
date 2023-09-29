@@ -11,11 +11,13 @@ class TeacherSerializer(serializers.ModelSerializer):
         fields = ('name','age' ,'gender','tel', 'email','school')
 
 class SchoolSerializer(serializers.ModelSerializer):
-    teachers = TeacherSerializer(read_only=True, many=True)
-
+    # teachers = TeacherSerializer(read_only=True, many=True)
+    # teachers = serializers.StringRelatedField(many=True)
+    students = serializers.ReadOnlyField(source='student.first_name')
     class Meta:
         model = School
         fields = '__all__'
+        # fields = ('name', 'students')
         
 
         

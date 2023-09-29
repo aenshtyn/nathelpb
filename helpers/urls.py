@@ -11,6 +11,7 @@ urlpatterns = [
     
     # students
     path("api/students", views.student_list, name='students'),
+    path("api/students/count", views.student_count, name='students_count'),
     path("api/students/<int:pk>/", views.student_details, name='students_detail'),
 
     

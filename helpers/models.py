@@ -16,15 +16,7 @@ DISABILITY = [
 GENDER = [
     ("Male", "Male"),
     ("Female", "Female"),
-]
-
-@property
-def age(self):
-    return timezone.now().year - self.dob.year
- 
-
-        
-   
+] 
 class NameMixin:
     @property
     def name(self):
@@ -33,13 +25,12 @@ class NameMixin:
 class AgeMixin:
     @property
     def age(self):
-        return timezone.now().year - self.dob.year
-        
+        return timezone.now().year - self.dob.year 
     
-class Doctor(NameMixin, models.Model):
+class Doctor(NameMixin, AgeMixin, models.Model):
     first_name = models.CharField(blank=False, max_length=80, default='')
     last_name = models.CharField(blank=False, max_length=80, default='')
-    # dob = models.DateField(default=date.today)
+    dob = models.DateField()
     gender = models.CharField(blank=False, max_length=80, default='')
     email = models.CharField(blank=False, max_length=80, default='')
     tel = models.CharField(blank=False, max_length=80, default='')

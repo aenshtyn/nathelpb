@@ -1,6 +1,8 @@
 from django.http.response import JsonResponse
 from django.shortcuts import render
 from rest_framework import status
+from rest_framework.renderers import JSONRenderer
+from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser
 
@@ -105,7 +107,10 @@ def student_details(request, pk):
         student.delete()
         return JsonRespons({'message': 'Student was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
 
-
+@api_view(['GET'])
+def student_count(request, format=None):
+    student_count = Student.objects.count()
+    return student_count
 # TEACHERS
 
 @api_view(['GET', 'POST', 'DELETE'])
