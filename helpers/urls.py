@@ -22,6 +22,11 @@ urlpatterns = [
     # doctor
     path("api/doctors", views.doctor_list, name='doctors'),
     path("api/doctors/<int:pk>/", views.teacher_details, name='doctors_detail'),
+    
+    # analytics
+    path("api/analytics/helpers", views.helper_analytics, name='helper_analytics'),
+    path("api/analytics/cases", views.case_analytics, name='case_analytics'),
+
 
     
 ]

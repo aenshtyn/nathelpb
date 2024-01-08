@@ -25,7 +25,29 @@ class NameMixin:
 class AgeMixin:
     @property
     def age(self):
-        return timezone.now().year - self.dob.year 
+        today = timezone.now()
+        dob = self.dob
+
+        years = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
+        months = today.month - dob.month - (today.day < dob.day)
+
+        if months < 0: months += 12 
+        years -= 1
+        age_str = ''
+        if years > 0:
+            age_str += f'{years} {"year" if years == 1 else "years"}'
+            if months > 0:
+                age_str += ' '
+        if months > 0:
+            age_str += f'{months} {"month" if months == 1 else "months"}'
+
+        if not age_str:
+            age_str = "less than a month"
+
+        return age_str
+
+        # return{'years': years, 'months':÷÷ months}
+        # return timezone.now().year - self.dob.year 
     
 class Doctor(NameMixin, AgeMixin, models.Model):
     first_name = models.CharField(blank=False, max_length=80, default='')
@@ -37,8 +59,10 @@ class Doctor(NameMixin, AgeMixin, models.Model):
 
 
     def __str__(self):
-       return '{} {}'.format(self.first_name, self.last_name)
-
+       return f'{self.name}'
+    
+    class Meta: 
+        ordering = ['first_name', 'last_name']
 
 class Issue(models.Model):
     name = models.CharField(blank=False, max_length=80, default='')
@@ -54,11 +78,14 @@ class School(models.Model):
     county = models.CharField(blank=False, max_length=80, default='')
     sub_county = models.CharField(blank=False, max_length=80, default='')
     location = models.CharField(blank=False, max_length=80, default='')
-    student_population = models.IntegerField
-    teacher_population = models.IntegerField
+    student_population = models.IntegerField()
+    teacher_population = models.IntegerField()
+    date_joined = models.DateField()
 
     def __str__(self):
        return '{}'.format(self.name)
+    
+
 
 
 class Teacher(NameMixin, AgeMixin, models.Model):
@@ -69,9 +96,13 @@ class Teacher(NameMixin, AgeMixin, models.Model):
     email = models.CharField(blank=False, max_length=80, default='')
     tel = models.CharField(blank=False, max_length=80, default='')
     school = models.ForeignKey(School, on_delete=models.CASCADE)
+    date_joined = models.DateField()
 
     def __str__(self):
-       return '{} {}'.format(self.first_name, self.last_name)
+       return f'{self.name}'
+    
+    class Meta: 
+        ordering = ['first_name', 'last_name']
     
 
 class Student(NameMixin, AgeMixin, models.Model):  
@@ -81,10 +112,26 @@ class Student(NameMixin, AgeMixin, models.Model):
     gender = models.CharField(blank=False, max_length=80, choices = GENDER, default='')
     disability = models.CharField(max_length= 20, choices = DISABILITY, default = 'none')
     school = models.ForeignKey(School, on_delete=models.CASCADE)
-    grade= models.IntegerField
+    grade= models.IntegerField()
     stream = models.CharField(blank=False, max_length=80, default='')
-    uid = models.IntegerField
+    uid = models.IntegerField()
+    date_joined = models.DateField()
 
+    def __str__(self):
+       return f'{self.name}'
+    
+    class Meta: 
+        ordering = ['first_name', 'last_name']
+
+
+class Case(models.Model):
+    name = models.CharField(blank=False, max_length=80, default='')
+    helper = models.ForeignKey(Student, on_delete=models.CASCADE)
+    date_reported = models.DateField()
+    date_solved = models.DateField()
+
+    def __str__(self):
+        return f'{self.name}'
 
 # class Report(models.Model):
 #     date = models.DateField

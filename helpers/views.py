@@ -6,8 +6,12 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser
 
-from helpers.models import Doctor, School, Student, Teacher, Doctor
+from helpers.models import Doctor, School, Student, Teacher, Doctor, Case
 from helpers.serializers import SchoolSerializer, TeacherSerializer, StudentSerializer, DoctorSerializer
+
+import datetime
+from datetime import timedelta
+from django.utils import timezone
 
 # Create your views here.
 
@@ -83,7 +87,7 @@ def student_list(request):
         return JsonResponse(student_serializer.data, status=status.HTTP_201_CREATED)
     return JsonResponse(student_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['GET', 'POST', 'DELETE'])
+@api_view(['GET', 'PUT', 'DELETE'])
 def student_details(request, pk):
 
     try:
@@ -105,7 +109,7 @@ def student_details(request, pk):
 
     elif request.method == 'DELETE':
         student.delete()
-        return JsonRespons({'message': 'Student was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
+        return JsonResponse({'message': 'Student was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
 
 @api_view(['GET'])
 def student_count(request, format=None):
@@ -185,3 +189,70 @@ def doctor_details(request, pk):
     elif request.method == 'DELETE':
         doctor.delete()
         return JsonResponse({'message': 'Doctor was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
+    
+
+@api_view(['GET'])
+def helper_analytics(request):
+
+    total_helpers = Student.objects.all().count()
+    total_schools = School.objects.all().count()
+    total_teachers = Teacher.objects.all().count()
+
+
+    
+ # Calculate date ranges
+    today = timezone.now()
+    last_week = today - timedelta(days=7)
+    last_month = today - timedelta(days=30)
+
+ # Get weekly and monthly new additions
+    weekly_new_student_additions =  Student.objects.filter(date_joined__range=(last_week, today)).count()    
+    monthly_new_student_additions = Student.objects.filter(date_joined__range=(last_month, today)).count()
+    monthly_new_school_additions = School.objects.filter(date_joined__range=(last_month, today)).count()
+    monthly_new_teacher_additions =Teacher.objects.filter(date_joined__range=(last_month, today)).count()
+
+
+# Prepare data to be returned as JSON
+
+    data = {
+        'total_helpers': total_helpers,
+        'total_teachers': total_teachers,
+        'total_schools': total_schools,
+        'weekly_new_student_additions': weekly_new_student_additions,
+        'monthly_new_student_additions': monthly_new_student_additions,
+        'monthly_new_school_additions': monthly_new_school_additions,
+        'monthly_new_teacher_additions': monthly_new_teacher_additions,
+    }
+
+    return JsonResponse(data)
+
+
+@api_view(['GET'])
+def case_analytics(request):
+
+    # Count total cases
+    total_cases = Case.objects.all().count()
+
+    # Calculate date ranges
+    today = timezone.now()
+    last_week = today - timedelta(days=7)
+    last_month = today - timedelta(days=30)
+
+    # Get weekly and monthly cases
+    weekly_cases = Case.objects.filter(date_reported__range=(last_week, today)).count()
+    monthly_cases = Case.objects.filter(date_reported__range=(last_month, today)).count()
+
+    # Calculate percentage change for weekly cases
+    # previous_week_cases = Case.objects.filter(date_reported__range=(last_week - timedelta(days=7), last_week)).count
+    # percentage_change = 0.0
+    # if previous_week_cases != 0:
+    #     percentage_change = ((weekly_cases - previous_week_cases) / previous_week_cases) * 100
+
+    data = {
+        'total_cases': total_cases,
+        'weekly_cases': weekly_cases,
+        'monthly_cases': monthly_cases,
+        # 'percentage_change': percentage_change
+    }
+
+    return JsonResponse(data)
