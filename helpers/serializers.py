@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from helpers.models import Doctor, School, Student, Teacher, Case
+from helpers.models import Doctor, School, Student, Teacher, Case, Condition
 
 # Report
 class TeacherSerializer(serializers.ModelSerializer):
@@ -42,4 +42,10 @@ class CaseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Case
+        fields = '__all__'
+
+class ConditionSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Condition
         fields = '__all__'

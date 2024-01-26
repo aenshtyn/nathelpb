@@ -64,8 +64,12 @@ class Doctor(NameMixin, AgeMixin, models.Model):
     class Meta: 
         ordering = ['first_name', 'last_name']
 
-class Issue(models.Model):
+class Condition(models.Model):
     name = models.CharField(blank=False, max_length=80, default='')
+    description = models.CharField(blank=False, max_length=200, default='')
+
+    def __str__(self):
+       return '{}'.format(self.name)
 
 class School(models.Model):
     name = models.CharField(blank=False, max_length=80, default='')
@@ -125,13 +129,13 @@ class Student(NameMixin, AgeMixin, models.Model):
 
 
 class Case(models.Model):
-    name = models.CharField(blank=False, max_length=80, default='')
+    condition = models.ForeignKey(Condition, on_delete=models.CASCADE, default='')
     helper = models.ForeignKey(Student, on_delete=models.CASCADE)
     date_reported = models.DateField()
     date_solved = models.DateField()
 
     def __str__(self):
-        return f'{self.name}'
+        return f'{self.condition}'
 
 # class Report(models.Model):
 #     date = models.DateField
